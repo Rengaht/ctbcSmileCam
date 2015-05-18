@@ -301,6 +301,12 @@ void K2Face::updateFaceData(const UINT64 tracking_id, float head_pos_x,float hea
 	/*cout << "head_pos =" << head_pos_x << " , " << head_pos_y 
 		 << " face_pos = " << pFaceBox->Left << " , " << pFaceBox->Top << endl;*/
 	
+	// out of detection range
+	if(head_pos_x>global_param->Kinect_Right_x || head_pos_x<global_param->Kinect_Left_x){ 
+		head_pos_x=0;  head_pos_y=0;
+	}
+
+
 	ofPoint scaled_pos=ofPoint(head_pos_x,head_pos_y);
 	scaled_pos.x*=global_param->Kinect_Scale_x;
 	scaled_pos.y*=global_param->Kinect_Scale_y;
@@ -320,7 +326,7 @@ void K2Face::updateFaceData(const UINT64 tracking_id, float head_pos_x,float hea
 		map_tracked_face[tracking_id].updateGeometry(scaled_pos,scaled_sizee);
 		map_tracked_face[tracking_id].updateHappyStage(happy_stage);
 	}
-	
+
 	total_smile_score+=(map_tracked_face[tracking_id].getCurScore());
 
 }
@@ -333,7 +339,7 @@ float K2Face::CalculateSmileScore(const UINT64 tracking_id, const RectI* pFaceBo
 	float ismouth_open = ((int)pFaceProperties[FaceProperty::FaceProperty_MouthOpen] == 3 ? 1.0f : 0.0f);
 	
 
-	return (ishappy*4.0f+ismouth_move+ismouth_open*2.0)/4.0f;
+	return (ishappy*4.0f+ismouth_move+ismouth_open*2.5)/4.0f;
 
 }
 
@@ -344,6 +350,7 @@ float* K2Face::BodyToScreen(const CameraSpacePoint& body_point){
 
 	DepthSpacePoint depthPoint = { 0 };
 	m_pCoordinateMapper->MapCameraPointToDepthSpace(body_point, &depthPoint);
+	
 	//cout << "depth_point= " << depthPoint.X << ", " << depthPoint.Y << endl;
 
 

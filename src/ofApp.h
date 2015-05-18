@@ -29,13 +29,10 @@ class ofApp : public ofBaseApp{
 		void mousePressed(int x, int y, int button);
 		
 
-		void initScene();
-		void initSmileFrame();
-		void initCamera();
 		void pauseCamera();
 
 		void changeScene(SceneMode new_scene);
-		void initScene(SceneMode set_scene);
+		
 
 		void setSmileFrame(int set_frame);
 		void setSmileStage(int set_stage);
@@ -50,6 +47,7 @@ class ofApp : public ofBaseApp{
 		
 	private:
 		bool DEBUG_MODE;
+		bool FULL_SCREEN;
 
 		int ismile_frame;
 		int ismile_stage;
@@ -64,7 +62,14 @@ class ofApp : public ofBaseApp{
 		SceneMode idest_scene;
 		SceneBase* arr_scene[6];
 		FrameAnimation timer_change_scene;
-		
+		FrameAnimation timer_scene_timeout;
+
+		void loadScene();
+		void loadSmileFrame();
+		void initCamera();
+
+		void initScene(SceneMode set_scene);
+
 		bool upload_success;
 
 		K2Face* k2face;

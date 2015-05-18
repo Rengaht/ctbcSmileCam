@@ -20,19 +20,21 @@ void ofApp::setup(){
 
 	initCamera();
 	camera_paused=false;
+	FULL_SCREEN=false;
 
 	k2face=new K2Face();
 	k2face->setGlobalParam(global_param);
 	k2face->Init();
 	
-	initScene();
-	initSmileFrame();
+	loadScene();
+	loadSmileFrame();
 	
 
 	initScene(SceneMode::SLEEP);
 
 
 	timer_change_scene=FrameAnimation(5);
+	timer_scene_timeout=FrameAnimation(global_param->Scene_Timeout);
 }
 
 //--------------------------------------------------------------
@@ -42,11 +44,16 @@ void ofApp::update(){
 
 	arr_scene[icur_scene]->Update();
 
-	if(!camera_paused) 
-		video_cam.update();
-	//if(cam_size_animation.GetPortion()<1) cam_size_animation.Update();
+	// handle timeout
+	timer_scene_timeout.Update();
+	if(timer_scene_timeout.isFinished()){
+		changeScene(SceneMode::SLEEP);
+	}
+
+	if(!camera_paused) 	video_cam.update();
 	if(!cam_size_animation.isFinished()) cam_size_animation.Update();
 	
+
 	k2face->Update();
 
 	// use timer to delay change btw scenes
@@ -117,8 +124,10 @@ void ofApp::draw(){
 			ofPushStyle();
 			ofSetColor(0,255,0);
 			ofNoFill();
-				ofRect(global_param->Kinect_Position_x,global_param->Kinect_Position_y,
-					   1920*global_param->Kinect_Scale_x,1080*global_param->Kinect_Scale_y);
+			ofRect(global_param->Kinect_Position_x+1920*global_param->Kinect_Left_x,
+				   global_param->Kinect_Position_y,
+				   1920*global_param->Kinect_Scale_x*(global_param->Kinect_Right_x-global_param->Kinect_Left_x),
+				   1080*global_param->Kinect_Scale_y);
 			ofPopStyle();
 		}
 	}
@@ -128,21 +137,30 @@ void ofApp::draw(){
 }
 
 void ofApp::drawCamView(){
-	ofPushMatrix();
-	ofTranslate(1080,0);
-	ofRotate(90);
-	ofTranslate(1920,0);
-	ofScale(-1,1);
 	float cur_cam_size=cam_size_animation.GetPos();
-		video_cam.draw(0,0,cur_cam_size*1920.0,cur_cam_size*1080.0);
+	float cur_wid=cur_cam_size*1080;
+	float cur_hei=cur_cam_size*1920;
+
+	ofPushStyle();
+	ofSetRectMode(ofRectMode::OF_RECTMODE_CENTER);
+	ofPushMatrix();
+	ofTranslate(1080-cur_wid/2,1920-cur_hei/2);
+	ofScale(-1,1);
+	ofRotate(90);
+		video_cam.draw(0,0,cur_hei,cur_wid);
 	ofPopMatrix();
+	ofPopStyle();
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	
+		
 		if(key=='a'){
 			DEBUG_MODE=!DEBUG_MODE;
+		}else if(key=='f'){
+			FULL_SCREEN=!FULL_SCREEN;
+			ofSetFullscreen(FULL_SCREEN);
+
 		}else if(key=='s'){
 			global_param->saveParameterFile();
 		}else if(key=='r'){
@@ -164,16 +182,37 @@ void ofApp::keyPressed(int key){
 					break;
 				case 'q':
 					global_param->Kinect_Scale_x-=.1;
+					ofClamp(global_param->Kinect_Scale_x,0,1);
 					break;
 				case 'w':
 					global_param->Kinect_Scale_x+=.1;
+					ofClamp(global_param->Kinect_Scale_x,0,1);
 					break;
 				case 'z':
 					global_param->Kinect_Scale_y-=.1;
+					ofClamp(global_param->Kinect_Scale_y,0,1);
 					break;
 				case 'x':
 					global_param->Kinect_Scale_y+=.1;
+					ofClamp(global_param->Kinect_Scale_y,0,1);
 					break;
+				case 'u':
+					global_param->Kinect_Left_x-=.05;
+					ofClamp(global_param->Kinect_Left_x,0,1);
+					break;
+				case 'i':
+					global_param->Kinect_Left_x+=.05;
+					ofClamp(global_param->Kinect_Left_x,0,1);
+					break;
+				case 'o':
+					global_param->Kinect_Right_x-=.05;
+					ofClamp(global_param->Kinect_Right_x,0,1);
+					break;
+				case 'p':
+					global_param->Kinect_Right_x+=.05;
+					ofClamp(global_param->Kinect_Right_x,0,1);
+					break;
+
 			}
 		
 		}
@@ -189,7 +228,7 @@ void ofApp::mousePressed(int x, int y, int button){
 
 
 
-void ofApp::initSmileFrame(){
+void ofApp::loadSmileFrame(){
 	
 	arr_smile_frame=new UIMovie[MAPP_FRAME*3];
 
@@ -246,7 +285,7 @@ void ofApp::initCamera(){
 void ofApp::pauseCamera(){
 	camera_paused=false;
 }
-void ofApp::initScene(){
+void ofApp::loadScene(){
 	
 	icur_scene=SceneMode::SLEEP;
 
@@ -261,6 +300,8 @@ void ofApp::initScene(){
 }
 
 void ofApp::changeScene(SceneMode new_scene){
+
+	timer_scene_timeout.Reset();
 
 	if(new_scene==idest_scene || new_scene==icur_scene)  return;
 
@@ -292,7 +333,7 @@ void ofApp::initScene(SceneMode set_scene){
 	timer_change_scene.Restart();
 	//icur_scene=set_scene;
 
-	
+	if(set_scene!=SceneMode::SLEEP) timer_scene_timeout.Restart();
 }
 
 #pragma region Smile Frame
@@ -353,14 +394,7 @@ void ofApp::createPhoto(string id_str){
 		ofFbo imgfbo;
 		imgfbo.allocate(ofGetWidth(),ofGetHeight(),GL_RGBA);
 		imgfbo.begin();
-			ofPushMatrix();
-			ofTranslate(1080,0);
-			ofRotate(90);
-			ofTranslate(1920,0);
-			ofScale(-1,1);
-				float cur_cam_size=1;
-				video_cam.draw(0,0,cur_cam_size*1920.0,cur_cam_size*1080.0);
-			ofPopMatrix();
+			drawCamView();
 		
 			/*ofImage frameImage;
 			frameImage.loadImage("frame_"+ofToString(ismile_frame+1)+".png");

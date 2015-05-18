@@ -14,12 +14,13 @@ class SceneBase{
 		ofApp* ptr_app;
 		PButton* arr_button;
 		int mbutton;
+		
 		SceneBase(){
 		}
 		SceneBase(ofApp *set_ptr){
 			ptr_app=set_ptr;
 		}
-	
+		
 		void DrawOnGraph(bool debug_mode){
 			//ofBackground(0,0);
 			DrawContent();
@@ -32,7 +33,9 @@ class SceneBase{
 		void HandleMousePressed(float mouse_x,float mouse_y){
 			for(int i=0;i<mbutton;++i) 
 				if(arr_button[i].isEnable()){
-					if(arr_button[i].checkClicked(mouse_x,mouse_y)) ButtonEvent(arr_button[i].getIndex());
+					if(arr_button[i].checkClicked(mouse_x,mouse_y)){
+						ButtonEvent(arr_button[i].getIndex());
+					}
 				}
 		}
 

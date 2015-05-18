@@ -45,6 +45,7 @@ public:
 		arr_button[1].setEnable(false);
 	}
 	void End(){
+		
 		movie_back.stop();
 
 	}

@@ -117,6 +117,7 @@ private:
 	void loadPrevImage(){
 		v_prev_image.clear();
 
+		vector<ofImage> tmp_vec;
 		string dir_path="created";
 		ofDirectory img_dir(dir_path);
 		img_dir.allowExt("png");
@@ -127,11 +128,21 @@ private:
 		mshow_img=0;
 		while(mshow_img<MAX_MIMG && mshow_img<mfile){
 			ofImage img;
-			img.loadImage(img_dir.getFile(MAX_MIMG-mshow_img-1));
-			v_prev_image.push_back(img);
+			
+			/*ofFile tfile=img_dir.getFile(MAX_MIMG-mshow_img-1);
+			if(tfile.doesFileExist) 
+				img.loadImage(tfile);
+			*///img.loadImage(img_dir.getFile(MAX_MIMG-mshow_img-1));
+			img.loadImage(img_dir.getFile(mshow_img));
+			v_prev_image.push_front(img);
+			//tmp_vec.push_back(img);
 			
 			mshow_img++;
 		}
+		/*int s=tmp_vec.size();
+		for(int i=0;i<s;++i){
+			v_prev_image.push_back(tmp_vec[s-i-1]);
+		}*/
 		mshow_img=v_prev_image.size();
 	
 	}

@@ -1,3 +1,6 @@
+#ifndef FRAME_ANIMATION
+#define FRAME_ANIMATION
+
 #include <math.h>  
 #include "ofMath.h"
 
@@ -86,3 +89,6 @@ class FrameAnimation{
 			Reset();
 		}
 };
+
+
+#endif

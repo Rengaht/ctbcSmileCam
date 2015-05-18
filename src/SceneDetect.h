@@ -6,7 +6,7 @@
 #include "UIMovie.h"
 #include "SmileBar.h"
 
-static int SMILE_WEIGHT=1.2;
+static int SMILE_WEIGHT=1;
 
 class SceneDetect:public SceneBase{
 
@@ -17,14 +17,15 @@ public:
 		mbutton=0;
 		
 		movie_back=UIMovie("count_10.mov",UIMovie::MOV_GST);
-		
+		movie_look=UIMovie("look.mov",UIMovie::MOV_GST);
+
 		flash_animation=FrameAnimation(10);
 
 	}
 	void DrawContent(){
 
 		//ofBackground(ofColor::black);
-		if(set_to_shoot){
+		if(detect_stage==2){
 			ofPushStyle();
 			ofSetColor(255);
 				ofRect(0,0,ofGetWidth(),ofGetHeight());
@@ -33,13 +34,26 @@ public:
 		}
 		
 		movie_back.DrawOnGraph(0,0);
-		smile_bar.drawOnGraph(351,36);
+		movie_look.DrawOnGraph(0,270);
+
+		if(detect_stage==1)
+			smile_bar.drawOnGraph(351,36);
 		
 	}
 	void Update(){
+		movie_look.update();
+		if(movie_look.flag_finished){
+
+			movie_back.Init();
+			smile_bar.Init();
+			movie_look.Reset();
+		}
+		
 		movie_back.update();
+		
+
 		if(movie_back.flag_finished){
-			set_to_shoot=true;
+			detect_stage=2;
 			
 			ptr_app->pauseCamera();
 			movie_back.Reset();
@@ -63,12 +77,14 @@ public:
 
 	void Init(){
 		
-		movie_back.Init();
-		smile_bar.Init();
+		//movie_back.Init();
+		//smile_bar.Init();
+		movie_look.Init();
 		ptr_app->setSmileStage(0);
 
-		set_to_shoot=false;
+		detect_stage=0;
 		flash_animation.Reset();
+
 	}
 	void End(){
 		movie_back.stop();
@@ -83,7 +99,7 @@ public:
 	}
 	void drawTrackedFace(ofImage arr_smile_img[],vector<TrackedFace> trface,bool debug_mode){
 		
-		if(set_to_shoot) return;
+		if(detect_stage!=1) return;
 
 		auto it_face=trface.begin();
 		for(;it_face!=trface.end();++it_face){
@@ -96,9 +112,9 @@ public:
 	
 private:
 
-	bool set_to_shoot;
+	int detect_stage;
 
-	UIMovie movie_back;
+	UIMovie movie_back,movie_look;
 	ofApp::SceneMode next_scene;
 	SmileBar smile_bar;
 	
