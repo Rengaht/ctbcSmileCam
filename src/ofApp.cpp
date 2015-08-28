@@ -17,6 +17,7 @@ void ofApp::setup(){
 
 	DEBUG_MODE=false;
 
+	
 
 	initCamera();
 	camera_paused=false;
@@ -26,8 +27,11 @@ void ofApp::setup(){
 	k2face->setGlobalParam(global_param);
 	k2face->Init();
 	
+	created_img=new ofImage();
+
 	loadScene();
 	loadSmileFrame();
+	
 	
 
 	initScene(SceneMode::SLEEP);
@@ -35,6 +39,13 @@ void ofApp::setup(){
 
 	timer_change_scene=FrameAnimation(5);
 	timer_scene_timeout=FrameAnimation(global_param->Scene_Timeout);
+
+	// setup upload request
+	//ofRegisterURLNotification(this);
+	ofAddListener(http_form_manager.formResponseEvent, this, &ofApp::newResponse);
+
+
+	
 }
 
 //--------------------------------------------------------------
@@ -73,7 +84,9 @@ void ofApp::update(){
 	if(icur_scene==SceneMode::CONFIRM || icur_scene==SceneMode::DETECT){
 		if(ismile_frame>-1){
 			for(int i=0;i<=ismile_stage;++i){
-				arr_smile_frame[ismile_frame*3+i].update();
+				int ifr=getFrameIndex(ismile_frame,ismile_stage);
+				if(ifr<0) continue;
+				arr_smile_frame[ifr].update();
 			}
 		}
 		
@@ -102,20 +115,31 @@ void ofApp::draw(){
 	
 	if(icur_scene==SceneMode::CONFIRM || icur_scene==SceneMode::DETECT){
 		if(ismile_frame>-1){
-			for(int i=0;i<=ismile_stage;++i){
-			//for(int i=0;i<=2;++i){
-				int iframe=ismile_frame*3+i;
-				ofPushStyle();
-				if(iframe==8||iframe==11) ofEnableBlendMode(OF_BLENDMODE_SCREEN);
-				arr_smile_frame[iframe].DrawOnGraph(0,0);
-				//if(iframe==8||iframe==11) ofDisableBlendMode();
-				ofPopStyle();
-			
+			if(ismile_frame==1){
+				if(ismile_stage>=2) arr_smile_frame[5].DrawOnGraph(0,0);
+				if(ismile_stage>=1) arr_smile_frame[4].DrawOnGraph(0,0);
+				if(ismile_stage>=0) arr_smile_frame[3].DrawOnGraph(0,0);
+				
+			}else{
+				for(int i=0;i<=ismile_stage;++i){
+					
+					int iframe=getFrameIndex(ismile_frame,ismile_stage);
+					if(iframe<0) continue;
+
+					ofPushStyle();
+						if(iframe==8) ofEnableBlendMode(OF_BLENDMODE_SCREEN);
+						arr_smile_frame[iframe].DrawOnGraph(0,0);
+					ofPopStyle();			
+				}
 			}
+			
+		
 		}
 
 	}
 	
+	arr_scene[icur_scene]->DrawOnGraph(DEBUG_MODE);
+
 	if(icur_scene==SceneMode::DETECT){
 		vector<TrackedFace> vface=k2face->getTrackedFace();
 		((SceneDetect*)arr_scene[SceneMode::DETECT])->drawTrackedFace(arr_smile_img,vface,DEBUG_MODE);
@@ -132,7 +156,7 @@ void ofApp::draw(){
 		}
 	}
 
-	arr_scene[icur_scene]->DrawOnGraph(DEBUG_MODE);
+	
 	
 }
 
@@ -230,24 +254,32 @@ void ofApp::mousePressed(int x, int y, int button){
 
 void ofApp::loadSmileFrame(){
 	
-	arr_smile_frame=new UIMovie[MAPP_FRAME*3];
+	arr_smile_frame=new UIMovie[MTOTAL_FRAME];
 
 		arr_smile_frame[0]=UIMovie("frame/FIRE/F1.mov",85,133,UIMovie::MOV_HAP);
 		arr_smile_frame[1]=UIMovie("frame/FIRE/F2.mov",85,133,UIMovie::MOV_HAP);
 		arr_smile_frame[2]=UIMovie("frame/FIRE/F3.mov",85,133,UIMovie::MOV_HAP);
 
-		arr_smile_frame[3]=UIMovie("frame/FIRE/F1.mov",85,133,UIMovie::MOV_HAP);
-		arr_smile_frame[4]=UIMovie("frame/FIRE/F2.mov",85,133,UIMovie::MOV_HAP);
-		arr_smile_frame[5]=UIMovie("frame/FIRE/F3.mov",85,133,UIMovie::MOV_HAP);
+		arr_smile_frame[3]=UIMovie("frame/BUILD/B1.mov",73,104,UIMovie::MOV_HAP);
+		arr_smile_frame[4]=UIMovie("frame/BUILD/B2.mov",73,104,UIMovie::MOV_HAP);
+		arr_smile_frame[5]=UIMovie("frame/BUILD/B3.mov",73,104,UIMovie::MOV_HAP);
 
 		arr_smile_frame[6]=UIMovie("frame/MOTO/M1.mov",51,91,UIMovie::MOV_HAP);
 		arr_smile_frame[7]=UIMovie("frame/MOTO/M2.mov",51,91,UIMovie::MOV_HAP);
 		arr_smile_frame[8]=UIMovie("frame/MOTO/M3.mov",25,57,UIMovie::MOV_HAP);
 
-		arr_smile_frame[9]=UIMovie("frame/MOTO/M1.mov",51,91,UIMovie::MOV_HAP);
-		arr_smile_frame[10]=UIMovie("frame/MOTO/M2.mov",51,91,UIMovie::MOV_HAP);
-		arr_smile_frame[11]=UIMovie("frame/MOTO/M3.mov",25,57,UIMovie::MOV_HAP);
+		arr_smile_frame[9]=UIMovie("frame/WOMAN/W1.mov",33,64,UIMovie::MOV_HAP);
+		arr_smile_frame[10]=UIMovie("frame/WOMAN/W2.mov",33,64,UIMovie::MOV_HAP);
+		arr_smile_frame[11]=UIMovie("frame/WOMAN/W3.mov",33,64,UIMovie::MOV_HAP);
 
+		arr_smile_frame[12]=UIMovie("frame/GOLF/G1_Lin.mov",31,61,UIMovie::MOV_HAP);
+		arr_smile_frame[13]=UIMovie("frame/GOLF/G2_Hsu.mov",31,61,UIMovie::MOV_HAP);
+		arr_smile_frame[14]=UIMovie("frame/GOLF/G3_Ya.mov",31,61,UIMovie::MOV_HAP);
+		arr_smile_frame[15]=UIMovie("frame/GOLF/G4_Hsieh.mov",31,61,UIMovie::MOV_HAP);
+		
+		arr_smile_frame[16]=UIMovie("frame/BASEBALL/B1_Chou.mov",31,61,UIMovie::MOV_HAP);
+		arr_smile_frame[17]=UIMovie("frame/BASEBALL/B2_Lin.mov",31,61,UIMovie::MOV_HAP);
+		arr_smile_frame[18]=UIMovie("frame/BASEBALL/B3_Pon.mov",31,61,UIMovie::MOV_HAP);
 		
 
 		/*arr_smile_img=new ofImage[MAPP_FRAME*3];
@@ -316,14 +348,22 @@ void ofApp::changeScene(SceneMode new_scene){
 }
 
 void ofApp::initScene(SceneMode set_scene){
+	
+	if(set_scene<0 || set_scene>5) return;
 
 	//if(icur_scene!=SceneMode::SLEEP) 
 		arr_scene[set_scene]->Init();
-	if(set_scene==SceneMode::DETECT) k2face->Reset();
-
+	if(set_scene==SceneMode::DETECT){
+		k2face->Reset();
+		if(icur_scene==SceneMode::PREVIEW) ((SceneDetect*)arr_scene[SceneMode::DETECT])->setFirstShoot(false);
+		else ((SceneDetect*)arr_scene[SceneMode::DETECT])->setFirstShoot(true);
+	}
 	float dest_pos=1;
-	if(set_scene==SceneMode::SLEEP) dest_pos=.5;
-	
+	if(set_scene==SceneMode::SLEEP){
+		if(created_img->isAllocated())
+			((SceneSleep*)arr_scene[SceneMode::SLEEP])->addNewImage(*created_img);
+		dest_pos=.5;
+	}
 	if(dest_pos!=cam_size_animation.getEndPos()){
 		cam_size_animation.setEndPos(dest_pos);
 		cam_size_animation.Restart();
@@ -332,9 +372,13 @@ void ofApp::initScene(SceneMode set_scene){
 	idest_scene=set_scene;
 	timer_change_scene.Restart();
 	//icur_scene=set_scene;
-
-	if(set_scene!=SceneMode::SLEEP) timer_scene_timeout.Restart();
+	if(idest_scene!=SceneMode::SLEEP && idest_scene!=SceneMode::PREVIEW && idest_scene!=SceneMode::DETECT)
+		restartTimeout();
 }
+void ofApp::restartTimeout(){
+		timer_scene_timeout.Restart();
+}
+
 
 #pragma region Smile Frame
 
@@ -343,7 +387,12 @@ void ofApp::setSmileFrame(int set_frame){
 
 	ismile_frame=set_frame;
 	ismile_stage=0;
-	arr_smile_frame[ismile_frame*3+ismile_stage].Init();
+	int ifr=getFrameIndex(ismile_frame,ismile_stage);
+	if(ifr>-1) arr_smile_frame[ifr].Init();
+
+
+	k2face->setSelectedFrame(set_frame);
+
 	//for(int i=0;i<3;++i) arr_smile_frame[ismile_frame*3+i].Init();
 }
 void ofApp::setSmileStage(int set_stage){
@@ -351,14 +400,28 @@ void ofApp::setSmileStage(int set_stage){
 	//if(ismile_stage==set_stage) return;
 
 	ismile_stage=set_stage;
-	if(!arr_smile_frame[ismile_frame*3+ismile_stage].isPlaying()) 
-		arr_smile_frame[ismile_frame*3+ismile_stage].Init();
+	int ifr=getFrameIndex(ismile_frame,ismile_stage);
+	if(ifr<0) return;
+
+	if(!arr_smile_frame[ifr].isPlaying()) 
+		arr_smile_frame[ifr].Init();
 }
 void ofApp::stopAllSmileFrame(){
-	for(int i=0;i<MAPP_FRAME*3;++i)
+	
+	for(int i=0;i<MTOTAL_FRAME;++i)
 		arr_smile_frame[i].stop();
 
 }
+
+int ofApp::getFrameIndex(int iframe,int istage){
+	
+	if(iframe<4) return iframe*3+istage;
+	else{
+		if(istage==0) return iframe+8;
+		else return -1;
+	}
+}
+
 #pragma endregion
 
 
@@ -370,22 +433,22 @@ bool ofApp::uploadSuccess(){
 	return upload_success;
 }
 
-void ofApp::preparePhoto(){
+void ofApp::preparePhoto(bool create_new_id){
 	
 	upload_success=false;
-	string id_str=ofGetTimestampString("%Y_%m%d_%H%M_%S");
-	string url_str="http://"+id_str;
+	if(create_new_id) cur_id_str=ofGetTimestampString("%Y_%m%d_%H%M_%S");
+	//string url_str="http://"+cur_id_str;
 	
-	createPhoto(id_str);
-	createQRCode(url_str);
+	createPhoto(cur_id_str);
+	//createQRCode(url_str);
 
-	uploadPhoto(id_str);
+	uploadPhoto(cur_id_str);
 	/*photo_thread=new PhotoThread(id_str,ismile_frame,pimg,&upload_success);
 	photo_thread->startThread();*/
-	upload_success=true;
+	//upload_success=true;
 	camera_paused=false;
 
-	cur_id_str=id_str;
+	//cur_id_str=id_str;
 }
 
 void ofApp::createPhoto(string id_str){
@@ -399,12 +462,21 @@ void ofApp::createPhoto(string id_str){
 			/*ofImage frameImage;
 			frameImage.loadImage("frame_"+ofToString(ismile_frame+1)+".png");
 			frameImage.draw(0,0);*/
-			for(int i=0;i<=ismile_stage;++i){
-				int iframe=ismile_frame*3+i;
-				ofPushStyle();
-				if(iframe==8||iframe==11) ofEnableBlendMode(OF_BLENDMODE_SCREEN);
-				arr_smile_frame[iframe].draw(0,0);
-				ofPopStyle();
+			if(ismile_frame==1){
+				if(ismile_stage>=2) arr_smile_frame[5].DrawOnGraph(0,0);
+				if(ismile_stage>=1) arr_smile_frame[4].DrawOnGraph(0,0);
+				if(ismile_stage>=0) arr_smile_frame[3].DrawOnGraph(0,0);
+				
+			}else{
+				for(int i=0;i<=ismile_stage;++i){
+					int iframe=getFrameIndex(ismile_frame,ismile_stage);
+					if(iframe<0) continue;
+
+					ofPushStyle();
+					if(iframe==8||iframe==11) ofEnableBlendMode(OF_BLENDMODE_SCREEN);
+					arr_smile_frame[iframe].draw(0,0);
+					ofPopStyle();
+				}
 			}
 
 			
@@ -416,14 +488,12 @@ void ofApp::createPhoto(string id_str){
 		ofPixels pixels;
 		imgfbo.readToPixels(pixels);
 
-		ofImage* pimg=new ofImage();
-		pimg->setFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight(),OF_IMAGE_COLOR_ALPHA);
-		//pimg->grabScreen(0,0,ofGetWidth(),ofGetHeight());
-
-		((ScenePreview*)arr_scene[SceneMode::PREVIEW])->setPhotoImage(pimg);
-		pimg->saveImage(global_param->Created_File_Path+global_param->Created_File_Title+id_str+".png");
+		created_img->setFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight(),OF_IMAGE_COLOR_ALPHA);
 		
-		((SceneSleep*)arr_scene[SceneMode::SLEEP])->addNewImage(*pimg);
+		((ScenePreview*)arr_scene[SceneMode::PREVIEW])->setPhotoImage(created_img);
+		created_img->saveImage(global_param->Created_File_Path+global_param->Created_File_Title+id_str+".png");
+		
+		//((SceneSleep*)arr_scene[SceneMode::SLEEP])->addNewImage(*created_img);
 		
 	}
 
@@ -437,19 +507,55 @@ void ofApp::createPhoto(string id_str){
 
 	}
 
-	void ofApp::uploadPhoto(string id){
+	void ofApp::uploadPhoto(string id_str){
+		 string file_path=global_param->Created_File_Path+global_param->Created_File_Title+id_str+".png";;
+		 
 
+		 ofLog()<<"Upload Photo....";
+		
+		HttpForm f = HttpForm( "http://192.168.9.142/P314/ud_room4ARSharePhoto.php" );
+		//form field name, file name, mime type
+		f.addFormField("cardId",id_str);
+		f.addFormField("mode","normal");
+		f.addFile("file", file_path, "image/png");
 
+		//upload_success=true;
+		http_form_manager.submitForm( f, false );
 	}
+
+	void ofApp::newResponse(HttpFormResponse &response){
+		
+		if(response.status==HTTPResponse::HTTP_REQUEST_TIMEOUT){
+			ofLog()<<"Upload time out...";
+			upload_success=true;
+			createQRCode("hahaha");
+			return;
+		}
+		ofLog()<<"returned"<<response.responseBody;
+		
+		string response_str=response.responseBody;
+		int str_p1=response_str.find_last_of("=");
+		int str_p2=response_str.find_last_of('"');
+
+		string res_url=response_str.substr(str_p1+2,str_p2-str_p1-2);
+		ofLog()<<res_url;
+		
+		upload_success=true;
+
+		createQRCode(res_url);
+	}
+
+
 	void ofApp::deleteCurPhoto(){
-		this->deletePhoto(cur_id_str);
+		//this->deletePhoto(cur_id_str);
 	}
 	void ofApp::deletePhoto(string id_str){
 		string photo_path=global_param->Created_File_Path+global_param->Created_File_Title+id_str+".png";
-		ofFile file;
-		/*file.open(photo_path,ofFile::ReadWrite);
-		file.remove();
-		file.close();*/
+		
+		/*ofFile file;
+		file.open(photo_path,ofFile::ReadWrite);	
+		file.remove();*/
+		
 		//TODO: delete on server
 
 	}

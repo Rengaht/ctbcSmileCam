@@ -4,7 +4,10 @@
 
 //========================================================================
 
-int ofApp::MAPP_FRAME=4;
+int ofApp::MAPP_FRAME=12;
+int ofApp::MTOTAL_FRAME=19;
+int ofApp::FRAME_PER_PAGE=4;
+
 int UIMovie::MOV_HAP=1;
 int UIMovie::MOV_GST=0;
 

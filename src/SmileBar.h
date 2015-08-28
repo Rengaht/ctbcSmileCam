@@ -9,6 +9,9 @@ private:
 
 	int smile_score;
 	float dest_smile_score;
+	FrameAnimation ani_show;
+
+
 public:
 	SmileBar(){
 		bar_top.loadImage("bar_2.png");
@@ -16,20 +19,26 @@ public:
 
 		score_font.loadFont("MyriadPro-Semibold.otf",60);
 		score_font.setLetterSpacing(0.85);
+
+		ani_show=FrameAnimation(40);
 	}
 
 	void drawOnGraph(float dx,float dy){
+
+
+		ani_show.Update();
+
 		ofPushMatrix();
 		ofTranslate(dx,dy);
 
-		//ofPushStyle();
+		ofPushStyle();
+		ofSetColor(255,255*ani_show.GetPortion());
 		
 		bar_bottom.draw(0,0);
 		float draw_length=180+smile_score*5;
 		bar_top.drawSubsection(0,0,draw_length,180,0,0,draw_length,180);
 		
 		ofPushStyle();
-		ofSetColor(255);
 		ofPushMatrix();
 			ofTranslate(110,120);
 			ofScale(.7,.7);
@@ -54,7 +63,7 @@ public:
 			ofPopMatrix();
 		ofPopStyle();
 
-		//ofPopStyle();
+		ofPopStyle();
 
 		ofPopMatrix();
 
@@ -79,6 +88,7 @@ public:
 	void Init(){
 		smile_score=0;
 		dest_smile_score=0;
+		ani_show.Restart();
 	}
 	int getSmileStage(){
 		if(smile_score>=60) return 2;

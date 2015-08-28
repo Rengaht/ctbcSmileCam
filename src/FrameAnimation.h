@@ -9,16 +9,19 @@ class FrameAnimation{
 		
 		
 		FrameAnimation(){
-			setup(1,0);
+			setup(1,0,true);
 		}
 		FrameAnimation(float set_length){
-			setup(set_length,0.0f);
+			setup(set_length,0.0f,true);
 		}
+		/*FrameAnimation(float set_length,bool elastic){
+			setup(set_length,0.0f,elastic);
+		}*/
 		FrameAnimation(float set_length,float set_delay){
-			setup(set_length,set_delay);
+			setup(set_length,set_delay,true);
 		}
 		FrameAnimation(float set_length,float set_delay,float set_start,float set_end){
-			setup(set_length,set_delay);
+			setup(set_length,set_delay,true);
 			setPos(set_start,set_end);
 		}
 
@@ -30,12 +33,12 @@ class FrameAnimation{
 			return (ani_t==1);
 		}
 		float GetPortion(){
+			if(!ani_start) return 0;
 			if(ani_t<0) return 0;
 			if(ani_t==1) return 1;
 			//return ofClamp(sinf(ani_t*(HALF_PI)),0,1);
 			float k=0.5f;
-			float r=0.5f-0.51f*cosf(PI*ani_t+k*ani_t-k*0.5f);
-			//0.5-0.5*cosf(ani_t*(PI))
+			float r=is_elastic?(0.5f-0.51f*cosf(PI*ani_t+k*ani_t-k*0.5f)):(0.5-0.5*cosf(ani_t*(PI)));
 			return r;
 		}
 		float GetPos(){
@@ -73,6 +76,9 @@ class FrameAnimation{
 		float getEndPos(){
 			return end_pos;
 		}
+		void setElastic(bool set_elastic){
+			is_elastic=set_elastic;
+		}
 	private:
 		float ani_t,ani_vel;
 		float delay_fr;
@@ -80,12 +86,15 @@ class FrameAnimation{
 		float start_pos,end_pos;
 
 		bool ani_start;
-		
-		void setup(float set_length,float set_delay){
+		bool is_elastic;
+
+		void setup(float set_length,float set_delay,bool set_elastic){
 			ani_vel=1/set_length;
-			ofLog()<<ani_vel;
+			//ofLog()<<ani_vel;
 			delay_fr=set_delay;
-		
+			
+			is_elastic=set_elastic;
+
 			Reset();
 		}
 };

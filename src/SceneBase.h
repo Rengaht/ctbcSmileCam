@@ -47,6 +47,8 @@ class SceneBase{
 
 		virtual void ButtonEvent(int index){}
 
+		void onBackMovieFinish(int & p){}
+		void onMovieStartWait(int & p){}
 };
 
 #endif

@@ -17,8 +17,12 @@ public:
 		arr_button[1]=PButton(ofRectangle(625,840,250,250),1);
 		
 
-		movie_back=UIMovie("next.mov",15,UIMovie::MOV_GST);
+		//movie_back=UIMovie("next_hap.mov",15,UIMovie::MOV_HAP);
+		movie_back=UIMovie("next_1.mov",15,UIMovie::MOV_HAP);
 		
+		ofAddListener(movie_back.event_finish,this,&SceneConfirm::onBackMovieFinish);
+		ofAddListener(movie_back.event_start_wait,this,&SceneConfirm::onMovieStartWait);
+
 	}
 	void DrawContent(){
 
@@ -31,22 +35,27 @@ public:
 
 		
 
-		if(movie_back.flag_finished){
-			ptr_app->changeScene(next_scene);
-			movie_back.Reset();
-		}
-		if(!arr_button[0].isEnable() && movie_back.flag_loop){
-			arr_button[0].setEnable(true);
-			arr_button[1].setEnable(true);
-			//movie_back.flag_loop=false;
-		}
+		//if(movie_back.flag_finished){
+		//	ptr_app->changeScene(next_scene);
+		//	movie_back.Reset();
+		//}
+		//if(!arr_button[0].isEnable() && movie_back.flag_loop){
+		//	for(int i=0;i<mbutton;++i) arr_button[i].setEnable(true);
+		//	//movie_back.flag_loop=false;
+		//}
 		
+	}
+	void onBackMovieFinish(int &param){
+		ptr_app->changeScene(next_scene);
+		//movie_back.Reset();
+	}
+	void onMovieStartWait(int &p){
+		for(int i=0;i<mbutton;++i) arr_button[i].setEnable(true);
 	}
 	void Init(){
 		
 		movie_back.Init();
-		arr_button[0].setEnable(false);
-		arr_button[1].setEnable(false);
+		for(int i=0;i<mbutton;++i) arr_button[i].setEnable(false);
 
 	}
 	void End(){
@@ -57,8 +66,7 @@ public:
 	void ButtonEvent(int index){
 		
 //		ofLog()<<index<<" button clicked!";
-		arr_button[0].setEnable(false);
-		arr_button[1].setEnable(false);
+		for(int i=0;i<mbutton;++i) arr_button[i].setEnable(false);
 		movie_back.Continue();
 
 		switch(index){

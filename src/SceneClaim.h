@@ -16,8 +16,12 @@ public:
 		arr_button[1]=PButton(ofRectangle(620,1074,260,260),1);
 		
 
-		movie_back=UIMovie("notice.mov",36,UIMovie::MOV_GST);
+		movie_back=UIMovie("notice_1.mov",36,UIMovie::MOV_HAP);
+		//movie_back=UIMovie("notice.mov",36,UIMovie::MOV_GST);
 		
+		ofAddListener(movie_back.event_finish,this,&SceneClaim::onBackMovieFinish);
+		ofAddListener(movie_back.event_start_wait,this,&SceneClaim::onMovieStartWait);
+
 	}
 	void DrawContent(){
 
@@ -28,15 +32,7 @@ public:
 	void Update(){
 		movie_back.update();
 		
-		if(movie_back.flag_finished){
-			ptr_app->changeScene(next_scene);
-			movie_back.Reset();
-		}
-		if(!arr_button[0].isEnable() && movie_back.flag_loop){
-			arr_button[0].setEnable(true);
-			arr_button[1].setEnable(true);
-			//movie_back.flag_loop=false;
-		}
+		
 	}
 	void Init(){
 		
@@ -65,6 +61,14 @@ public:
 				next_scene=ofApp::SceneMode::SLEEP;
 				break;
 		}
+	}
+
+	void onBackMovieFinish(int & param){
+		ptr_app->changeScene(next_scene);
+		//movie_back.Reset();
+	}
+	void onMovieStartWait(int & p){
+		for(int i=0;i<mbutton;++i) arr_button[i].setEnable(true);
 	}
 private:
 	UIMovie movie_back;

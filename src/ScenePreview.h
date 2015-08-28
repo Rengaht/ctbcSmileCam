@@ -13,15 +13,18 @@ public:
 		
 		mbutton=1;
 		arr_button=new PButton[mbutton];
-		arr_button[0]=PButton(ofRectangle(624,1420,205,205),0);
+		arr_button[0]=PButton(ofRectangle(660,1580,152,152),0);
 
-		movie_back=UIMovie("count_20.mov",UIMovie::MOV_GST);
+		movie_back=UIMovie("count_20_1.mov",UIMovie::MOV_HAP);
+		movie_photo=UIMovie("end_1.mov",UIMovie::MOV_HAP);
+		movie_upload=UIMovie("wait_1.mov",35,UIMovie::MOV_HAP);
+		/*movie_back=UIMovie("count_20.mov",UIMovie::MOV_GST);
 		movie_photo=UIMovie("end.mov",UIMovie::MOV_GST);
-		movie_upload=UIMovie("wait.mov",35,UIMovie::MOV_GST);
+		movie_upload=UIMovie("wait.mov",35,UIMovie::MOV_GST);*/
 
 
-		photo_ani=FrameAnimation(25,12);
-		qrcode_ani=FrameAnimation(15,36);
+		photo_ani=FrameAnimation(25,0);
+		qrcode_ani=FrameAnimation(25,36);
 
 		back_photo=new ofImage();
 		back_photo->loadImage("photo_frame.png");
@@ -30,6 +33,10 @@ public:
 
 		image_qrcode=new ofImage();
 		image_qrcode->loadImage("qrcode_frame.png");
+
+		ofAddListener(movie_back.event_finish,this,&ScenePreview::onBackMovieFinish);
+		ofAddListener(movie_upload.event_finish,this,&ScenePreview::onUploadMovieFinish);
+		ofAddListener(movie_photo.event_finish,this,&ScenePreview::onPhotoMovieFinish);
 
 	}
 	void DrawContent(){
@@ -67,8 +74,8 @@ public:
 		ofPopMatrix();
 
 		ofPushMatrix();
-			float cur_qrcode_pos=ofLerp(1920,1366,qrcode_ani.GetPortion());
-			ofTranslate(159.6,cur_qrcode_pos);
+			float cur_qrcode_pos=ofLerp(1920,1355,qrcode_ani.GetPortion());
+			ofTranslate(130,cur_qrcode_pos);
 			ofRotate(-3);
 			back_qrcode->draw(0,0);
 			image_qrcode->draw(27,27);
@@ -88,7 +95,7 @@ public:
 			movie_upload.Continue();
 			upload_finish=true;
 		}
-		if(movie_upload.flag_finished){
+		/*if(movie_upload.flag_finished){
 			movie_back.Init();
 			movie_photo.Init();
 
@@ -104,7 +111,23 @@ public:
 		if(movie_back.flag_finished){
 			ptr_app->changeScene(ofApp::SceneMode::SLEEP);
 			movie_back.Reset();
-		}
+		}*/
+	}
+	void onBackMovieFinish(int & param){
+		ptr_app->changeScene(ofApp::SceneMode::SLEEP);
+		//movie_back.Reset();
+	}
+	void onUploadMovieFinish(int & param){
+		movie_back.Init();
+		movie_photo.Init();
+
+		photo_ani.Restart();
+		qrcode_ani.Restart();
+
+		//movie_upload.Reset();
+	}
+	void onPhotoMovieFinish(int & param){
+		arr_button[0].setEnable(true);
 	}
 	void Init(){
 		

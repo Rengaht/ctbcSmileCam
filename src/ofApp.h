@@ -2,6 +2,8 @@
 
 
 #include "ofMain.h"
+#include "HttpFormManager.h"
+
 #include "UIMovie.h"
 #include "SceneBase.h"
 #include "FrameAnimation.h"
@@ -37,14 +39,20 @@ class ofApp : public ofBaseApp{
 		void setSmileFrame(int set_frame);
 		void setSmileStage(int set_stage);
 		void stopAllSmileFrame();
+		int getFrameIndex(int iframe,int istage);
+
+		void restartTimeout();
 
 		bool uploadSuccess();
-		void preparePhoto();
+		void preparePhoto(bool create_new_id);
 		void deleteCurPhoto();
 		
+		void newResponse(HttpFormResponse &response);
+	
 		static int MAPP_FRAME;
-		
-		
+		static int MTOTAL_FRAME;
+		static int FRAME_PER_PAGE;
+	
 	private:
 		bool DEBUG_MODE;
 		bool FULL_SCREEN;
@@ -74,6 +82,9 @@ class ofApp : public ofBaseApp{
 
 		K2Face* k2face;
 
+		HttpFormManager http_form_manager;
+
+	
 		//PhotoThread *photo_thread;
 		ofImage arr_smile_img[3];
 		void createPhoto(string id_str);
@@ -84,6 +95,9 @@ class ofApp : public ofBaseApp{
 		void deletePhoto(string id);
 		
 		bool camera_paused;
+
+		ofImage* created_img;
+
 };
 
 

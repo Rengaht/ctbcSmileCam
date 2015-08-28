@@ -13,15 +13,20 @@ public:
 		arr_button[0]=PButton(ofRectangle(0,0,ofGetWidth(),ofGetHeight()),0);
 		mbutton=1;
 
-		movie_start=UIMovie("standby.mov",0,105,UIMovie::MOV_GST);
+		movie_start=UIMovie("standby_1.mov",0,105,UIMovie::MOV_HAP);
+		//movie_start=UIMovie("standby.mov",0,105,UIMovie::MOV_GST);
 		
 		play_ani=FrameAnimation(800);
 		show_ani[0]=FrameAnimation(30,60,-540,0);
 		show_ani[1]=FrameAnimation(30,240,1080,540);
 		show_ani[2]=FrameAnimation(30,480,-540,0);
 		
+		ani_fade=FrameAnimation(80);
+		ani_fade.setElastic(false);
+
 		loadPrevImage();
 		//Init();
+		ofAddListener(movie_start.event_finish,this,&SceneSleep::onBackMovieFinish);
 	}
 	void DrawContent(){
 
@@ -38,19 +43,20 @@ public:
 
 		ptr_app->drawCamView();
 
-		movie_start.DrawOnGraph(0,810);
+		ofPushStyle();
+		ofSetColor(255,255*(1-ani_fade.GetPortion()));
+			movie_start.DrawOnGraph(0,810);
+		ofPopStyle();
 
 	}
 	void Update(){
 		for(int i=0;i<3;++i) show_ani[i].Update();
 
 		movie_start.update();
-		/*if(movie_start.flag_loop){
-			movie_start.flag_loop=false;
-		}*/
-		if(movie_start.flag_finished){
+		
+		ani_fade.Update();
+		if(ani_fade.GetPortion()==1){
 			ptr_app->changeScene(ofApp::SceneMode::CLAIM);
-			movie_start.Reset();
 		}
 
 		play_ani.Update();
@@ -59,8 +65,14 @@ public:
 			updateShowIndex();
 			/*play_ani.setDelay(ofRandom(600,800));
 			play_ani.Restart();*/
-
 		}
+
+
+
+	}
+	void onBackMovieFinish(int & param){
+		//ptr_app->changeScene(ofApp::SceneMode::CLAIM);
+		//movie_start.Reset();
 	}
 	void Init(){
 		ofLog()<<"sleep scene init!";
@@ -77,6 +89,9 @@ public:
 			inext_img[i]=(i)%mshow_img;
 			show_ani[i].setDelay(ofRandom(i*120+60,i*360+120));
 		}
+
+		ani_fade.Reset();
+
 	}
 	void End(){
 		movie_start.stop();
@@ -90,7 +105,8 @@ public:
 			case 0:
 				// go to next scene
 				arr_button[0].setEnable(false);
-				movie_start.Continue();
+				movie_start.setPaused(true);
+				ani_fade.Restart();
 				//for(int i=0;i<3;++i) show_ani[i].Reset();
 				break;
 		}
@@ -103,6 +119,8 @@ public:
 		}
 	}
 
+	
+
 private:
 	UIMovie movie_start;
 	
@@ -113,6 +131,8 @@ private:
 	static const int MAX_MIMG=15;
 	FrameAnimation play_ani;
 	FrameAnimation show_ani[3];
+
+	FrameAnimation ani_fade;
 
 	void loadPrevImage(){
 		v_prev_image.clear();
@@ -129,22 +149,15 @@ private:
 		while(mshow_img<MAX_MIMG && mshow_img<mfile){
 			ofImage img;
 			
-			/*ofFile tfile=img_dir.getFile(MAX_MIMG-mshow_img-1);
-			if(tfile.doesFileExist) 
-				img.loadImage(tfile);
-			*///img.loadImage(img_dir.getFile(MAX_MIMG-mshow_img-1));
 			img.loadImage(img_dir.getFile(mshow_img));
 			v_prev_image.push_front(img);
-			//tmp_vec.push_back(img);
 			
 			mshow_img++;
 		}
-		/*int s=tmp_vec.size();
-		for(int i=0;i<s;++i){
-			v_prev_image.push_back(tmp_vec[s-i-1]);
-		}*/
+
 		mshow_img=v_prev_image.size();
-	
+		
+		img_dir.close();
 	}
 	void updateShowIndex(){
 		int iprev=ishow_img[2];

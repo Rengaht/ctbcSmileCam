@@ -67,6 +67,7 @@ K2Face::~K2Face(){
 
 void K2Face::Init(){
 
+	iselected_frame=-1;
 	HRESULT hr = InitK2Sensor();
 	
 }
@@ -95,12 +96,17 @@ void K2Face::Update(){
 	}
 	SafeRelease(pBodyFrame);
 
+	
 
 	auto it=map_tracked_face.begin();
 	while(it!=map_tracked_face.end()){
 		if(it->second.hasLostTrack()) it=map_tracked_face.erase(it);
-		else it++;
+		else{
+			it->second.update();
+			it++;
+		}
 	}
+
 
 }
 
@@ -193,6 +199,7 @@ void K2Face::ProcessFace(int nBodyCount, IBody** ppBodies){
 			Joint joints[JointType_Count];
 			float screenPointX=0;
 			float screenPointY=0;
+			float camera_distance=0;
 			IBody* pBody = ppBodies[iFace];
 			
 			if(pBody){
@@ -210,7 +217,7 @@ void K2Face::ProcessFace(int nBodyCount, IBody** ppBodies){
 						float* screen_point = BodyToScreen(head_point);
 						screenPointX = screen_point[0];
 						screenPointY = screen_point[1];
-
+						camera_distance=pow(head_point.X,2)+pow(head_point.Y,2)+pow(head_point.Z,2);
 					}
 				}
 			}
@@ -250,7 +257,7 @@ void K2Face::ProcessFace(int nBodyCount, IBody** ppBodies){
 						//cout << "Get Face Result: " << tracking_id << endl;
 						float score=CalculateSmileScore(tracking_id,&faceBox, facePoints, faceProperties);
 						
-						updateFaceData(tracking_id,screenPointX,screenPointY, &faceBox, score);
+						updateFaceData(tracking_id,screenPointX,screenPointY, &faceBox, score,camera_distance);
 
 					}
 				}
@@ -293,7 +300,7 @@ void K2Face::ProcessFace(int nBodyCount, IBody** ppBodies){
 }
 
 
-void K2Face::updateFaceData(const UINT64 tracking_id, float head_pos_x,float head_pos_y,const RectI* pFaceBox, float smile_score){
+void K2Face::updateFaceData(const UINT64 tracking_id, float head_pos_x,float head_pos_y,const RectI* pFaceBox, float smile_score,float camera_dist){
 	
 	float wid = pFaceBox->Right - pFaceBox->Left;
 	float hei = pFaceBox->Bottom - pFaceBox->Top;
@@ -302,7 +309,7 @@ void K2Face::updateFaceData(const UINT64 tracking_id, float head_pos_x,float hea
 		 << " face_pos = " << pFaceBox->Left << " , " << pFaceBox->Top << endl;*/
 	
 	// out of detection range
-	if(head_pos_x>global_param->Kinect_Right_x || head_pos_x<global_param->Kinect_Left_x){ 
+	if(head_pos_x>1920.0*global_param->Kinect_Right_x || head_pos_x<1920.0*global_param->Kinect_Left_x){ 
 		head_pos_x=0;  head_pos_y=0;
 	}
 
@@ -320,15 +327,19 @@ void K2Face::updateFaceData(const UINT64 tracking_id, float head_pos_x,float hea
 
 	int happy_stage=(smile_score>=global_param->Smile_Detect_Thres[2])?2:((smile_score>=global_param->Smile_Detect_Thres[1])?1:0);
 
-	if(map_tracked_face.find(tracking_id)==map_tracked_face.end()) 
-		map_tracked_face[tracking_id]=TrackedFace(scaled_pos,scaled_sizee,happy_stage,global_param);
-	else{
-		map_tracked_face[tracking_id].updateGeometry(scaled_pos,scaled_sizee);
+	if(map_tracked_face.find(tracking_id)==map_tracked_face.end()){
+		map_tracked_face[tracking_id]=TrackedFace(scaled_pos,scaled_sizee,happy_stage,global_param,camera_dist);
+		
+	}else{
+		map_tracked_face[tracking_id].updateGeometry(scaled_pos,scaled_sizee,camera_dist);
 		map_tracked_face[tracking_id].updateHappyStage(happy_stage);
 	}
 
-	total_smile_score+=(map_tracked_face[tracking_id].getCurScore());
-
+	float tmp_score=(map_tracked_face[tracking_id].getCurScore())*global_param->Smile_Score_Weight;
+	int mface=map_tracked_face.size();
+	if(mface>1) tmp_score/=(mface/1.2);
+	total_smile_score+=tmp_score;
+	
 }
 
 
@@ -363,12 +374,22 @@ float* K2Face::BodyToScreen(const CameraSpacePoint& body_point){
 
 
 vector<TrackedFace> K2Face::getTrackedFace(){
-
+	
+	
 	vector<TrackedFace> cur_face;
 	auto it=map_tracked_face.begin();
 	for(;it!=map_tracked_face.end();it++){
 		cur_face.push_back(it->second);
 	}
+	int max_face=map_tracked_face.size();
+	if(iselected_frame>=0 && iselected_frame<4) max_face=global_param->Kinect_Face_Limit[iselected_frame];
+	
+	if(max_face<map_tracked_face.size()){
+		sort(cur_face.begin(),cur_face.end(),
+			[] (TrackedFace const& a, TrackedFace const& b) { return a.camera_distance < b.camera_distance;});	
+		cur_face.resize(max_face);
+	}
+
 	return cur_face;
 }
 
@@ -385,4 +406,9 @@ void K2Face::Reset(){
 
 void K2Face::setGlobalParam(GlobalParam* set_param){
 	global_param=set_param;
+}
+
+void K2Face::setSelectedFrame(int set_select){
+	iselected_frame=set_select;
+
 }
