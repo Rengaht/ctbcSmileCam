@@ -85,7 +85,6 @@ class UIMovie:public ofVideoPlayer{
 
 			if(!pause_at_loop) return;
 
-<<<<<<< HEAD
 			if(!flag_wait && has_loop_span){
 				if(cur_frame>=loop_start_frame){
 					if(!flag_wait){
@@ -107,16 +106,6 @@ class UIMovie:public ofVideoPlayer{
 					}
 				}else{ 
 					this->setFrame(loop_start_frame);						
-=======
-			if(!flag_wait && cur_frame>=loop_end_frame){
-				if(!has_loop_span){
-					flag_wait=true;				
-					this->setPaused(true);
-					int p=1;
-					ofNotifyEvent(event_start_wait,p,this);
-				}else{ 
-					this->setFrame(loop_start_frame);					
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 				}
 				
 			}

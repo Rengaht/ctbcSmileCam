@@ -28,7 +28,6 @@ public:
 		loadPrevImage();
 		//Init();
 		ofAddListener(movie_start.event_finish,this,&SceneSleep::onBackMovieFinish);
-<<<<<<< HEAD
 
 		img_live.loadImage("live.png");
 
@@ -36,8 +35,6 @@ public:
 		game_available=true;
 
 
-=======
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	}
 
 
@@ -66,18 +63,9 @@ public:
 					img_live.draw(20,40);					
 					if(game_available) movie_start.DrawOnGraph(0,810);
 
-<<<<<<< HEAD
 				ofPopStyle();
 			}
 		
-=======
-		ptr_app->drawCamView();
-
-		ofPushStyle();
-		ofSetColor(255,255*(1-ani_fade.GetPortion()));
-			movie_start.DrawOnGraph(0,810);
-		ofPopStyle();
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 
 	}
 	void Update(){
@@ -87,11 +75,7 @@ public:
 
 		movie_start.update();
 		
-<<<<<<< HEAD
 		ani_fade.Update(delta_t);
-=======
-		ani_fade.Update();
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		if(ani_fade.GetPortion()==1){
 			ptr_app->changeScene(ofApp::SceneMode::CLAIM);
 		}
@@ -109,7 +93,6 @@ public:
 			updateShowIndex();
 			/*play_ani.setDelay(ofRandom(600,800));
 			play_ani.Restart();*/
-<<<<<<< HEAD
 		}
 
 
@@ -120,12 +103,6 @@ public:
 			}
 		}
 
-=======
-		}
-
-
-
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	}
 	void onBackMovieFinish(int & param){
 		//ptr_app->changeScene(ofApp::SceneMode::CLAIM);
@@ -171,10 +148,7 @@ public:
 				arr_button[0].setEnable(false);
 				movie_start.setPaused(true);
 				ani_fade.Restart();
-<<<<<<< HEAD
 				ptr_app->startBgm();
-=======
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 				//for(int i=0;i<3;++i) show_ani[i].Reset();
 				break;
 		}
@@ -187,7 +161,6 @@ public:
 		}
 	}
 
-<<<<<<< HEAD
 	void setFailMode(bool fail_camera,bool fail_kinect){
 		if(fail_camera) mpic=4;
 		else mpic=3;
@@ -198,10 +171,6 @@ public:
 	
 
 
-=======
-	
-
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 private:
 	UIMovie movie_start;
 	ofImage img_live;
@@ -218,8 +187,6 @@ private:
 
 	int mpic; //4 for failed camera
 	bool game_available;
-
-	FrameAnimation ani_fade;
 
 	void loadPrevImage(){
 		v_prev_image.clear();
@@ -242,7 +209,6 @@ private:
 				if(sub_file.getExtension()=="png"){
 					ofImage img;
 			
-<<<<<<< HEAD
 					img.loadImage(sub_file);
 					v_prev_image.push_back(img);
 					ofLog()<<"Load Image:¡@"<<sub_file.getFileName();
@@ -254,10 +220,6 @@ private:
 				
 			}
 			ofDirectory sub_dir(sub_file.getAbsolutePath());
-=======
-			img.loadImage(img_dir.getFile(mshow_img));
-			v_prev_image.push_front(img);
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 			
 			sub_dir.allowExt("png");
 			sub_dir.listDir();
@@ -279,10 +241,6 @@ private:
 			}
 			if(mshow_img>=MAX_MIMG) break;
 		}
-<<<<<<< HEAD
-=======
-
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		mshow_img=v_prev_image.size();
 		
 		img_dir.close();

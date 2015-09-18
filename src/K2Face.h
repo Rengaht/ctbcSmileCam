@@ -34,11 +34,7 @@ class K2Face{
 
 		void setGlobalParam(GlobalParam* set_param);
 		void setSelectedFrame(int set_select);
-<<<<<<< HEAD
 		void setEnableScore(bool set_score);
-=======
-
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	private:
 
 		GlobalParam* global_param;
@@ -76,10 +72,7 @@ class K2Face{
 
 		map<Poco::UInt64,TrackedFace> map_tracked_face;
 		int iselected_frame;
-<<<<<<< HEAD
 		bool score_enable;
-=======
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 
 };
 

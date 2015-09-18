@@ -2,10 +2,7 @@
 
 #include "ofMain.h"
 #include "HttpFormManager.h"
-<<<<<<< HEAD
 #include "ofxHttpUtils.h"
-=======
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 
 #include "UIMovie.h"
 #include "SceneBase.h"
@@ -55,16 +52,11 @@ class ofApp : public ofBaseApp{
 		void preparePhoto(bool create_new_id);
 		void deleteCurPhoto();
 		
-<<<<<<< HEAD
 		void newResponse(ofxHttpResponse &response);
-=======
-		void newResponse(HttpFormResponse &response);
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	
 		static int MAPP_FRAME;
 		static int MTOTAL_FRAME;
 		static int FRAME_PER_PAGE;
-<<<<<<< HEAD
 		
 		void playSound(int type);
 
@@ -83,9 +75,6 @@ class ofApp : public ofBaseApp{
 		void uploadResponse(HttpFormResponse &response);
 		HttpFormManager upload_manager;
 
-=======
-	
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	private:
 		
 		bool FULL_SCREEN;
@@ -118,13 +107,8 @@ class ofApp : public ofBaseApp{
 
 		K2Face* k2face;
 
-<<<<<<< HEAD
 		//HttpFormManager http_form_manager;
 		ofxHttpUtils httpUtils;
-=======
-		HttpFormManager http_form_manager;
-
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	
 		//PhotoThread *photo_thread;
 		ofImage arr_smile_img[3];
@@ -141,7 +125,6 @@ class ofApp : public ofBaseApp{
 
 		ofImage* created_img;
 
-<<<<<<< HEAD
 		ofSoundPlayer  sound_bgm,sound_button,sound_camera,sound_frame;
 		void loadSound();
 
@@ -150,8 +133,6 @@ class ofApp : public ofBaseApp{
 		ofTrueTypeFont font_debug;
 
 		void sendSlackLog(string content);
-=======
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 };
 
 

@@ -16,13 +16,8 @@ public:
 		
 		mbutton=0;
 		
-<<<<<<< HEAD
 		movie_back=UIMovie("count_10_2.mov",UIMovie::MOV_HAP);
 		//movie_look=UIMovie("look_short.mov",UIMovie::MOV_HAP);
-=======
-		movie_back=UIMovie("count_10_1.mov",UIMovie::MOV_HAP);
-		movie_look=UIMovie("look_1.mov",UIMovie::MOV_HAP);
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		movie_hint=UIMovie("ready_1.mov",UIMovie::MOV_HAP);
 
 		/*movie_back=UIMovie("count_10.mov",UIMovie::MOV_GST);
@@ -37,11 +32,7 @@ public:
 		setFirstShoot(true);
 
 		ofAddListener(movie_back.event_finish,this,&SceneDetect::onBackMovieFinish);
-<<<<<<< HEAD
 		//ofAddListener(movie_look.event_finish,this,&SceneDetect::onLookMovieFinish);
-=======
-		ofAddListener(movie_look.event_finish,this,&SceneDetect::onLookMovieFinish);
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		ofAddListener(movie_hint.event_finish,this,&SceneDetect::onHintMovieFinish);
 	}
 	~SceneDetect(){
@@ -60,11 +51,7 @@ public:
 		}
 		
 		movie_back.DrawOnGraph(0,0);
-<<<<<<< HEAD
 		//movie_look.DrawOnGraph(0,270);
-=======
-		movie_look.DrawOnGraph(0,270);
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		movie_hint.DrawOnGraph(0,720);
 		
 		if(detect_stage==1)
@@ -72,40 +59,16 @@ public:
 		
 	}
 	void Update(){
-<<<<<<< HEAD
 		//movie_look.update();
 		movie_hint.update();
 	
-=======
-		movie_look.update();
-		movie_hint.update();
-		/*if(movie_look.flag_finished){
-			detect_stage=1;
-			movie_back.Init();
-			smile_bar.Init();
-			movie_look.Reset();
-		}*/
-		
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		movie_back.update();
 		float t=movie_back.getPosition();
 		//if(t>=.5 && !movie_look.isPlaying()) movie_look.Init();
 
-<<<<<<< HEAD
 		float delta_t=ptr_app->getDeltaMillis();
 		smile_bar.update(delta_t);
 		
-=======
-		/*if(movie_back.flag_finished){
-			detect_stage=2;
-			
-			ptr_app->pauseCamera();
-			movie_back.Reset();
-			flash_animation.Restart();
-			ptr_app->preparePhoto(first_shoot);
-		}*/
-		//if(flash_animation.GetPortion()==1){
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		if(flash_animation.isFinished()){
 			ptr_app->changeScene(ofApp::SceneMode::PREVIEW);
 			flash_animation.Reset();
@@ -135,7 +98,6 @@ public:
 		ptr_app->preparePhoto(first_shoot);
 
 	}
-<<<<<<< HEAD
 	void onLookMovieFinish(int &p){
 		
 		/*movie_hint.Init();
@@ -154,25 +116,6 @@ public:
 		detect_stage=1;
 		smile_bar.Init();		
 		ptr_app->setScoreEnable(true);
-=======
-	void onBackMovieFinish(int & param){
-		detect_stage=2;
-			
-		ptr_app->pauseCamera();
-		//movie_back.Reset();
-		flash_animation.Restart();
-		ptr_app->preparePhoto(first_shoot);
-	}
-	void onLookMovieFinish(int &p){
-		detect_stage=1;
-		smile_bar.Init();
-
-		movie_hint.Init();
-	}
-	void onHintMovieFinish(int &p){
-		
-		movie_back.Init();
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		
 		//movie_look.Reset();
 	}
@@ -180,11 +123,7 @@ public:
 		
 		//movie_back.Init();
 		smile_bar.Init();
-<<<<<<< HEAD
 		movie_hint.Init();
-=======
-		movie_look.Init();
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		ptr_app->setSmileStage(0);
 
 		detect_stage=0;
@@ -197,11 +136,7 @@ public:
 		movie_back.stop();
 		ptr_app->stopAllSmileFrame();
 		
-<<<<<<< HEAD
 		//movie_look.stop();
-=======
-		movie_look.stop();
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		movie_hint.stop();
 	}
 
@@ -209,11 +144,8 @@ public:
 
 	}
 	void updateSmileScore(float score){
-<<<<<<< HEAD
 		if(detect_stage!=1) return;
 
-=======
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		smile_bar.setSmileScore(score);
 	}
 	void drawTrackedFace(ofImage arr_smile_img[],vector<TrackedFace> trface,bool debug_mode){

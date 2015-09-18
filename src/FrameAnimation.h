@@ -95,17 +95,11 @@ class FrameAnimation{
 		bool is_elastic;
 
 		void setup(float set_length,float set_delay,bool set_elastic){
-<<<<<<< HEAD
 
 			ani_vel=1/(set_length*millis_per_frame);
 			//ofLog()<<ani_vel;
 
 			delay_t=set_delay*millis_per_frame;
-=======
-			ani_vel=1/set_length;
-			//ofLog()<<ani_vel;
-			delay_fr=set_delay;
->>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 			
 			is_elastic=set_elastic;
 
