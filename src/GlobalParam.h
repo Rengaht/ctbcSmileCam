@@ -13,6 +13,7 @@ public:
 	int Scene_Timeout;
 	
 	int* Kinect_Face_Limit;
+	float Smile_Score_Weight;
 
 	float Kinect_Position_x;
 	float Kinect_Position_y;
@@ -29,14 +30,25 @@ public:
 	string Created_File_Path;//="created/";
 	string Created_File_Title;//="smilecam_";
 
+	string Default_Address;
 
 	GlobalParam(){
 		readParameterFile();
-		Kinect_Face_Limit=new int[4];
-		Kinect_Face_Limit[0]=2;
-		Kinect_Face_Limit[1]=1;
-		Kinect_Face_Limit[2]=3;
+		Kinect_Face_Limit=new int[11];
+		Kinect_Face_Limit[0]=3;
+		Kinect_Face_Limit[1]=2;
+		Kinect_Face_Limit[2]=1;
 		Kinect_Face_Limit[3]=1;
+
+		Kinect_Face_Limit[4]=1;
+		Kinect_Face_Limit[5]=1;
+		Kinect_Face_Limit[6]=1;
+		Kinect_Face_Limit[7]=1;
+		
+		Kinect_Face_Limit[8]=1;
+		Kinect_Face_Limit[9]=1;
+		Kinect_Face_Limit[10]=1;
+
 
 	}
 
@@ -47,7 +59,7 @@ public:
 		if(_param.loadFile(PARAMETER_FILE_PATH) ){
 			ofLog()<<"mySettings.xml loaded!";
 		}else{
-			ofLog()<<"unable to load xml check data/ folder";
+			ofLog()<<"Unable to load xml check data/ folder";
 			file_exist=false;
 		}
 
@@ -81,6 +93,10 @@ public:
 		Created_File_Title=_param.getValue("CREATED_FILE_TITLE","smilecam_");
 		
 		Scene_Timeout=_param.getValue("SCENE_TIMEOUT",3600);
+		Smile_Score_Weight=_param.getValue("SMILE_SCORE_WEIGHT",1.0);
+
+
+		Default_Address=_param.getValue("DEFAULT_ADDRESS","ctbc");
 
 		if(!file_exist) saveParameterFile();
 	}
@@ -114,8 +130,12 @@ public:
 		_param.setValue("CREATED_FILE_TITLE",Created_File_Title);
 
 		_param.setValue("SCENE_TIMEOUT",Scene_Timeout);
+		_param.setValue("SMILE_SCORE_WEIGHT",Smile_Score_Weight);
+
+		_param.setValue("DEFAULT_ADDRESS",Default_Address);
 
 		_param.save(PARAMETER_FILE_PATH);
+
 
 	}
 

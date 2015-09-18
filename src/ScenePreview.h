@@ -13,15 +13,18 @@ public:
 		
 		mbutton=1;
 		arr_button=new PButton[mbutton];
-		arr_button[0]=PButton(ofRectangle(624,1420,205,205),0);
+		arr_button[0]=PButton(ofRectangle(660,1580,152,152),0);
 
-		movie_back=UIMovie("count_20.mov",UIMovie::MOV_GST);
+		movie_back=UIMovie("count_20_1.mov",UIMovie::MOV_HAP);
+		movie_photo=UIMovie("end_1.mov",UIMovie::MOV_HAP);
+		movie_upload=UIMovie("wait_1.mov",40,63,UIMovie::MOV_HAP);
+		/*movie_back=UIMovie("count_20.mov",UIMovie::MOV_GST);
 		movie_photo=UIMovie("end.mov",UIMovie::MOV_GST);
-		movie_upload=UIMovie("wait.mov",35,UIMovie::MOV_GST);
+		movie_upload=UIMovie("wait.mov",35,UIMovie::MOV_GST);*/
 
 
-		photo_ani=FrameAnimation(25,12);
-		qrcode_ani=FrameAnimation(15,36);
+		photo_ani=FrameAnimation(25,0);
+		qrcode_ani=FrameAnimation(25,36);
 
 		back_photo=new ofImage();
 		back_photo->loadImage("photo_frame.png");
@@ -31,7 +34,20 @@ public:
 		image_qrcode=new ofImage();
 		image_qrcode->loadImage("qrcode_frame.png");
 
+		ofAddListener(movie_back.event_finish,this,&ScenePreview::onBackMovieFinish);
+		ofAddListener(movie_upload.event_finish,this,&ScenePreview::onUploadMovieFinish);
+		ofAddListener(movie_photo.event_finish,this,&ScenePreview::onPhotoMovieFinish);
+
 	}
+	~ScenePreview(){
+		delete back_photo;
+		delete back_qrcode;
+		delete image_qrcode;
+		//if(image_photo) delete image_photo;
+
+	}
+
+
 	void DrawContent(){
 
 		
@@ -62,49 +78,63 @@ public:
 			ofRotate(cur_rotate);
 			back_photo->draw(-cur_photo_size_x*0.035,-cur_photo_size_y*0.02,cur_photo_size_x*1.09,cur_photo_size_y*1.05);
 			//image_photo->draw(23,23,621,1104);
-			image_photo->draw(0,0,cur_photo_size_x,cur_photo_size_y);
+			if(image_photo->isAllocated()) image_photo->draw(0,0,cur_photo_size_x,cur_photo_size_y);
 
 		ofPopMatrix();
 
 		ofPushMatrix();
-			float cur_qrcode_pos=ofLerp(1920,1366,qrcode_ani.GetPortion());
-			ofTranslate(159.6,cur_qrcode_pos);
+			float cur_qrcode_pos=ofLerp(1920,1355,qrcode_ani.GetPortion());
+			ofTranslate(130,cur_qrcode_pos);
 			ofRotate(-3);
 			back_qrcode->draw(0,0);
-			image_qrcode->draw(27,27);
+			if(image_qrcode->isAllocated()) 
+				image_qrcode->draw(27,27);
 		ofPopMatrix();
 
 	}
 	void Update(){
+
+		float delta_t=ptr_app->getDeltaMillis();
+
 		movie_upload.update();
 
 		movie_back.update();
 		movie_photo.update();
 
-		photo_ani.Update();
-		qrcode_ani.Update();
+		photo_ani.Update(delta_t);
+		qrcode_ani.Update(delta_t);
 		
+
 		if(!upload_finish && ptr_app->uploadSuccess()){
 			movie_upload.Continue();
 			upload_finish=true;
+				
 		}
-		if(movie_upload.flag_finished){
-			movie_back.Init();
-			movie_photo.Init();
+		
+		
+		/*if(ptr_app->CRAZY_MODE){
+			if(qrcode_ani.GetPortion()==1){
+				if(ofRandom(0,1500)<1){
+					ButtonEvent(0);
+				}
+			}
+		}*/
+	}
+	void onBackMovieFinish(int & param){
+		ptr_app->changeScene(ofApp::SceneMode::SLEEP);
+		//movie_back.Reset();
+	}
+	void onUploadMovieFinish(int & param){
+		movie_back.Init();
+		movie_photo.Init();
 
-			photo_ani.Restart();
-			qrcode_ani.Restart();
+		photo_ani.Restart();
+		qrcode_ani.Restart();
 
-			movie_upload.Reset();
-		}
-		if(movie_photo.flag_finished){
-			arr_button[0].setEnable(true);
-			movie_photo.flag_finished=false;
-		}
-		if(movie_back.flag_finished){
-			ptr_app->changeScene(ofApp::SceneMode::SLEEP);
-			movie_back.Reset();
-		}
+		//movie_upload.Reset();
+	}
+	void onPhotoMovieFinish(int & param){
+		arr_button[0].setEnable(true);
 	}
 	void Init(){
 		
@@ -115,6 +145,9 @@ public:
 		movie_photo.Reset();
 
 		arr_button[0].setEnable(false);
+		
+		qrcode_ani.Reset();
+		photo_ani.Reset();
 	}
 	void End(){
 		movie_upload.stop();
@@ -123,6 +156,10 @@ public:
 	}
 
 	void ButtonEvent(int index){
+
+		if(ptr_app->CRAZY_MODE) ofLog()<<"Auto Event: "<<index;
+
+
 		switch(index){
 			case 0:
 				ptr_app->deleteCurPhoto();

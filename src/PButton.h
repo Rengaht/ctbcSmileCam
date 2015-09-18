@@ -11,6 +11,12 @@ class PButton{
 		PButton(ofRectangle set_area,int set_index){
 			button_area=set_area;
 			button_index=set_index;
+			setSoundType(0);
+		}
+		PButton(ofRectangle set_area,int set_index, int set_sound){
+			button_area=set_area;
+			button_index=set_index;
+			setSoundType(set_sound);
 		}
 		bool isEnable(){
 			return enabled;
@@ -30,11 +36,17 @@ class PButton{
 		int getIndex(){
 			return button_index;
 		}
-		
+		void setSoundType(int set_type){
+			sound_type=set_type;
+		}
+		int getSoundType(){
+			return sound_type;
+		}
 
 	private:
 		bool enabled;
 		int button_index;
+		int sound_type;
 		ofRectangle button_area;
 };
 

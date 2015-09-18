@@ -25,15 +25,16 @@ class K2Face{
 		~K2Face();
 
 		
-		void Update();
-		void Init();
+		void Update(float delta_t);
+		bool Init();
 		
 		void Reset();
 		vector<TrackedFace> getTrackedFace();
 		float getTotalSmileScore();
 
 		void setGlobalParam(GlobalParam* set_param);
-
+		void setSelectedFrame(int set_select);
+		void setEnableScore(bool set_score);
 	private:
 
 		GlobalParam* global_param;
@@ -47,7 +48,7 @@ class K2Face{
 		HRESULT UpdateBodyData(IBody** ppBodies);
 
 		
-		void updateFaceData(const UINT64 tracking_id, float head_pos_x,float head_pos_y,const RectI* pFaceBox, float smile_score);
+		void updateFaceData(const UINT64 tracking_id, float head_pos_x,float head_pos_y,const RectI* pFaceBox, float smile_score,float camera_dist);
 
 		float CalculateSmileScore(const UINT64 tracking_id, const RectI* pFaceBox, const PointF* pFacePoints, const DetectionResult* pFaceProperties);
 
@@ -69,7 +70,9 @@ class K2Face{
 		
 		float* BodyToScreen(const CameraSpacePoint& bodyPoint);
 
-		map<UInt64,TrackedFace> map_tracked_face;
+		map<Poco::UInt64,TrackedFace> map_tracked_face;
+		int iselected_frame;
+		bool score_enable;
 
 };
 
