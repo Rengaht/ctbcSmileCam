@@ -11,7 +11,10 @@ private:
 	float dest_smile_score;
 	FrameAnimation ani_show;
 
+<<<<<<< HEAD
 	float bonus_score;
+=======
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 
 public:
 	SmileBar(){
@@ -22,13 +25,22 @@ public:
 		score_font.setLetterSpacing(0.85);
 
 		ani_show=FrameAnimation(40);
+<<<<<<< HEAD
 	}
 	void update(float delta_t){
 		ani_show.Update(delta_t);
+=======
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	}
 
 	void drawOnGraph(float dx,float dy){
 
+<<<<<<< HEAD
+=======
+
+		ani_show.Update();
+
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		ofPushMatrix();
 		ofTranslate(dx,dy);
 
@@ -90,9 +102,12 @@ public:
 		smile_score=0;
 		dest_smile_score=0;
 		ani_show.Restart();
+<<<<<<< HEAD
 
 		bonus_score=0;
 
+=======
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	}
 	int getSmileStage(){
 		if(smile_score>=60) return 2;

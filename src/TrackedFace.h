@@ -59,7 +59,11 @@ private:
 			accu_happy[i]=0;
 		}*/
 
+<<<<<<< HEAD
 		ani_change=FrameAnimation(50);
+=======
+		ani_change=FrameAnimation(20);
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		ani_change.setElastic(false);
 		ani_change.Restart();
 
@@ -85,10 +89,17 @@ public:
 	~TrackedFace(){
 		//delete smile_image;
 	}
+<<<<<<< HEAD
 	void update(float delta_t){
 		ani_change.Update(delta_t);
 
 		ani_hint.Update(delta_t);
+=======
+	void update(){
+		ani_change.Update();
+
+		ani_hint.Update();
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		if(ani_hint.GetPortion()==1){
 			ani_hint.Restart();
 			hint_frame=(hint_frame+1)%4;

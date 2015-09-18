@@ -35,9 +35,15 @@ public:
 	GlobalParam(){
 		readParameterFile();
 		Kinect_Face_Limit=new int[11];
+<<<<<<< HEAD
 		Kinect_Face_Limit[0]=3;
 		Kinect_Face_Limit[1]=2;
 		Kinect_Face_Limit[2]=1;
+=======
+		Kinect_Face_Limit[0]=2;
+		Kinect_Face_Limit[1]=1;
+		Kinect_Face_Limit[2]=3;
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		Kinect_Face_Limit[3]=1;
 
 		Kinect_Face_Limit[4]=1;
@@ -94,9 +100,12 @@ public:
 		
 		Scene_Timeout=_param.getValue("SCENE_TIMEOUT",3600);
 		Smile_Score_Weight=_param.getValue("SMILE_SCORE_WEIGHT",1.0);
+<<<<<<< HEAD
 
 
 		Default_Address=_param.getValue("DEFAULT_ADDRESS","ctbc");
+=======
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 
 		if(!file_exist) saveParameterFile();
 	}
@@ -132,7 +141,10 @@ public:
 		_param.setValue("SCENE_TIMEOUT",Scene_Timeout);
 		_param.setValue("SMILE_SCORE_WEIGHT",Smile_Score_Weight);
 
+<<<<<<< HEAD
 		_param.setValue("DEFAULT_ADDRESS",Default_Address);
+=======
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 
 		_param.save(PARAMETER_FILE_PATH);
 

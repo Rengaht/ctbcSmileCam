@@ -32,6 +32,7 @@ public:
 	void Update(){
 		movie_back.update();
 		
+<<<<<<< HEAD
 
 		if(ptr_app->CRAZY_MODE){
 			if(ofRandom(0,900)<1){
@@ -39,6 +40,8 @@ public:
 				else ButtonEvent(1);
 			}
 		}
+=======
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		
 	}
 	void Init(){

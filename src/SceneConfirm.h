@@ -34,6 +34,7 @@ public:
 		movie_back.update();
 
 		
+<<<<<<< HEAD
 		if(ptr_app->CRAZY_MODE){
 			if(ofRandom(0,900)<1){
 				if(ofRandom(0,2)<1) ButtonEvent(0);
@@ -47,6 +48,25 @@ public:
 	}
 	void onMovieStartWait(int &p){
 		//for(int i=0;i<mbutton;++i) arr_button[i].setEnable(true);
+=======
+
+		//if(movie_back.flag_finished){
+		//	ptr_app->changeScene(next_scene);
+		//	movie_back.Reset();
+		//}
+		//if(!arr_button[0].isEnable() && movie_back.flag_loop){
+		//	for(int i=0;i<mbutton;++i) arr_button[i].setEnable(true);
+		//	//movie_back.flag_loop=false;
+		//}
+		
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
+	}
+	void onBackMovieFinish(int &param){
+		ptr_app->changeScene(next_scene);
+		//movie_back.Reset();
+	}
+	void onMovieStartWait(int &p){
+		for(int i=0;i<mbutton;++i) arr_button[i].setEnable(true);
 	}
 	void Init(){
 		
@@ -61,11 +81,15 @@ public:
 
 	void ButtonEvent(int index){
 		
+<<<<<<< HEAD
 		if(ptr_app->CRAZY_MODE){
 			ofLog()<<"Auto Event: "<<index;
 			if(!arr_button[index].isEnable()) return;
 		}
 
+=======
+//		ofLog()<<index<<" button clicked!";
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		for(int i=0;i<mbutton;++i) arr_button[i].setEnable(false);
 		movie_back.Continue();
 

@@ -17,7 +17,11 @@ public:
 
 		movie_back=UIMovie("count_20_1.mov",UIMovie::MOV_HAP);
 		movie_photo=UIMovie("end_1.mov",UIMovie::MOV_HAP);
+<<<<<<< HEAD
 		movie_upload=UIMovie("wait_1.mov",40,63,UIMovie::MOV_HAP);
+=======
+		movie_upload=UIMovie("wait_1.mov",35,UIMovie::MOV_HAP);
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		/*movie_back=UIMovie("count_20.mov",UIMovie::MOV_GST);
 		movie_photo=UIMovie("end.mov",UIMovie::MOV_GST);
 		movie_upload=UIMovie("wait.mov",35,UIMovie::MOV_GST);*/
@@ -38,6 +42,7 @@ public:
 		ofAddListener(movie_upload.event_finish,this,&ScenePreview::onUploadMovieFinish);
 		ofAddListener(movie_photo.event_finish,this,&ScenePreview::onPhotoMovieFinish);
 
+<<<<<<< HEAD
 	}
 	~ScenePreview(){
 		delete back_photo;
@@ -45,6 +50,8 @@ public:
 		delete image_qrcode;
 		//if(image_photo) delete image_photo;
 
+=======
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	}
 
 
@@ -110,6 +117,7 @@ public:
 			upload_finish=true;
 				
 		}
+<<<<<<< HEAD
 		
 		
 		/*if(ptr_app->CRAZY_MODE){
@@ -127,10 +135,40 @@ public:
 	void onUploadMovieFinish(int & param){
 		movie_back.Init();
 		movie_photo.Init();
+=======
+		/*if(movie_upload.flag_finished){
+			movie_back.Init();
+			movie_photo.Init();
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 
 		photo_ani.Restart();
 		qrcode_ani.Restart();
 
+<<<<<<< HEAD
+=======
+			movie_upload.Reset();
+		}
+		if(movie_photo.flag_finished){
+			arr_button[0].setEnable(true);
+			movie_photo.flag_finished=false;
+		}
+		if(movie_back.flag_finished){
+			ptr_app->changeScene(ofApp::SceneMode::SLEEP);
+			movie_back.Reset();
+		}*/
+	}
+	void onBackMovieFinish(int & param){
+		ptr_app->changeScene(ofApp::SceneMode::SLEEP);
+		//movie_back.Reset();
+	}
+	void onUploadMovieFinish(int & param){
+		movie_back.Init();
+		movie_photo.Init();
+
+		photo_ani.Restart();
+		qrcode_ani.Restart();
+
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 		//movie_upload.Reset();
 	}
 	void onPhotoMovieFinish(int & param){

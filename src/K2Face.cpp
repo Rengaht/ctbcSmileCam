@@ -112,7 +112,11 @@ void K2Face::Update(float delta_t){
 	while(it!=map_tracked_face.end()){
 		if(it->second.hasLostTrack()) it=map_tracked_face.erase(it);
 		else{
+<<<<<<< HEAD
 			it->second.update(delta_t);
+=======
+			it->second.update();
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 			it++;
 		}
 	}
@@ -328,7 +332,10 @@ void K2Face::updateFaceData(const UINT64 tracking_id, float head_pos_x,float hea
 		 << " face_pos = " << pFaceBox->Left << " , " << pFaceBox->Top << endl;*/
 	
 	// out of detection range
+<<<<<<< HEAD
 	boolean is_out=false;
+=======
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	if(head_pos_x>1920.0*global_param->Kinect_Right_x || head_pos_x<1920.0*global_param->Kinect_Left_x){ 
 		head_pos_x=0;  head_pos_y=0;
 		is_out=true;
@@ -356,10 +363,13 @@ void K2Face::updateFaceData(const UINT64 tracking_id, float head_pos_x,float hea
 		map_tracked_face[tracking_id].updateHappyStage(happy_stage);
 	}
 
+<<<<<<< HEAD
 	if(!score_enable) return;
 	
 	if(is_out) return;
 
+=======
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	float tmp_score=(map_tracked_face[tracking_id].getCurScore())*global_param->Smile_Score_Weight;
 	int mface=map_tracked_face.size();
 	if(mface>1) tmp_score/=(mface/1.2);
@@ -407,7 +417,11 @@ vector<TrackedFace> K2Face::getTrackedFace(){
 		cur_face.push_back(it->second);
 	}
 	int max_face=map_tracked_face.size();
+<<<<<<< HEAD
 	if(iselected_frame>=0 && iselected_frame<11) max_face=global_param->Kinect_Face_Limit[iselected_frame];
+=======
+	if(iselected_frame>=0 && iselected_frame<4) max_face=global_param->Kinect_Face_Limit[iselected_frame];
+>>>>>>> 353a6421e22b79be6ef1fa7a578bcb21c0df7d5c
 	
 	if(max_face<map_tracked_face.size()){
 		sort(cur_face.begin(),cur_face.end(),
